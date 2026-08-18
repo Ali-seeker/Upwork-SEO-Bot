@@ -1,0 +1,25 @@
+Timestamp: 2026-08-18T14:56:49+05:00
+
+Exact Error Output:
+[error] [c7623553-07f9-4150-a50d-d272d6763320] Evaluation error: column "description" of relation "jobs_selected" does not exist
+
+![Error Screenshot](file:///c:/Users/kcv/OneDrive/Desktop/DB-code%20error.png)
+
+Exact Line Where Error Was Thrown:
+File: src/services/storage.js
+Line: 451
+
+Code Snippet:
+```javascript
+451:        await this.pool.query(
+452:           `INSERT INTO jobs_selected (id, campaign_id, title, description, open_source_viable, created_at)
+453:            VALUES ($1, $2, $3, $4, $5, $6)
+454:            ON CONFLICT (id) DO NOTHING`,
+455:           [id, jobData.campaignId || null, jobData.title || normTitle, jobData.description || '', true, new Date()]
+456:        );
+```
+Before ScreenShot:
+![Before Screenshot](file:///c:/Users/kcv/OneDrive/Desktop/db-before.png)
+
+After ScreenShot: 
+![After Screenshot](file:///c:/Users/kcv/OneDrive/Desktop/After-db.png)
