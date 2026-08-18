@@ -17,7 +17,7 @@ async function testChatGPTScraper() {
       config: {
         keyword: 'weather app',
         questions: [],
-        projectName: 'github repo generator'
+        projectName: 'repo generator'
       }
     },
     {
@@ -29,7 +29,7 @@ async function testChatGPTScraper() {
           'What database should it use?',
           'Should it have a REST API?'
         ],
-        projectName: 'github repo generator'
+        projectName: 'repo generator'
       }
     },
     {
@@ -43,7 +43,7 @@ async function testChatGPTScraper() {
           'Mobile responsive design',
           'Real-time inventory tracking'
         ],
-        projectName: 'github repo generator'
+        projectName: 'repo generator'
       }
     }
   ];
@@ -260,7 +260,7 @@ async function quickTest() {
     const result = await askChatGPTForRepoMetadata({
       keyword: 'calculator app',
       questions: ['Should it have scientific functions?'],
-      projectName: 'github repo generator'
+      projectName: 'repo generator'
     }, (msg) => console.log(`  > ${msg}`));
     
     console.log('\n✅ Quick test successful!');

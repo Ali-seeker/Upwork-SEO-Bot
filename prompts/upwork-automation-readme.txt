@@ -108,7 +108,7 @@ Focus on outcomes, scale, or competitive advantages
 
 | **Other Functionalities** | Includes structured error handling, automatic retries on transient failures, detailed logs for monitoring, and parallel task execution for efficiency. |
 
-| **Safety Controls** | Implements safeguards like rate limiting, cooldown intervals, proxy or IP rotation, randomized timing, and compliance checks to ensure secure, ethical, and consistent operation. |
+| **Safety Controls** | Implements safeguards like rate limiting, cooldown intervals,  or IP rotation, randomized timing, and compliance checks to ensure secure, ethical, and consistent operation. |
 
 | ... | ... |
 

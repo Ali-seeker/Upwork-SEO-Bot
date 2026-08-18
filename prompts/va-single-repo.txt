@@ -98,7 +98,7 @@ Explain the technical flow in 3–5 steps:
 
 **Other Functionalities** — Retry logic, error handling, structured logs, anti-detection pacing, and parallel processing are configurable in the Appilot dashboard.  
 
-**Safety Controls** — Rate limits, cooldowns, randomized behavior, and proxy/device rotation to reduce risk.
+**Safety Controls** — Rate limits, cooldowns, randomized behavior, and device rotation to reduce risk.
 
 ---
 
@@ -112,7 +112,7 @@ List core technologies used:
 
 **Tools:** Appilot, Android Debug Bridge (ADB), Appium Inspector, Bluestacks, Nox Player, Scrcpy, Firebase Test Lab, MonkeyRunner, Accessibility  
 
-**Infrastructure:** Dockerized device farms, Cloud emulators, Proxy networks, Parallel Device Execution, Task Queues, Real device farm
+**Infrastructure:** Dockerized device farms, Cloud emulators,  networks, Parallel Device Execution, Task Queues, Real device farm
 
 ---
 
@@ -163,9 +163,9 @@ QA engineers use it to execute end-to-end device tests, so they can catch regres
 
 Explain profiles, per-account configs, and isolated sessions.
 
-**Does it support proxy rotation or anti-detection?**  
+**Does it support  rotation or anti-detection?**  
 
-Describe proxy pools, per-device bindings, pacing, and randomization.
+Describe  pools, per-device bindings, pacing, and randomization.
 
 **Can I schedule it to run periodically?**  
 

@@ -8,7 +8,7 @@ export default function CreateCampaignModal({ open, onClose, onCreate }) {
   const [gptAccounts, setGptAccounts] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
-    category: 'keywords', // 'keywords', 'apify', 'va', 'upwork', or 'scrape-jobs'
+    category: 'upwork', // 'upwork' or 'scrape-jobs'
     keywords: '',
     apifyUrls: '',
     questions: '',
@@ -57,7 +57,7 @@ export default function CreateCampaignModal({ open, onClose, onCreate }) {
   // Reset form when modal closes/opens
   useEffect(() => {
     if (open) {
-      loadAccountGroups();
+      // loadAccountGroups(); // Removed because GitHub features are disabled
       loadGPTAccounts();
       // Reset error when modal opens
       setError('');
@@ -65,7 +65,7 @@ export default function CreateCampaignModal({ open, onClose, onCreate }) {
       // Reset form state when modal closes to prevent stale data
       setFormData({
         name: '',
-        category: 'keywords',
+        category: 'upwork',
         keywords: '',
         apifyUrls: '',
         questions: '',
@@ -115,10 +115,7 @@ export default function CreateCampaignModal({ open, onClose, onCreate }) {
       return;
     }
 
-    if (!formData.accountGroupId) {
-      setError('Please select an account group');
-      return;
-    }
+    // Account group validation removed because GitHub features are disabled
 
     if (!formData.gptAccountId) {
       setError('Please select a ChatGPT account');
@@ -429,9 +426,7 @@ export default function CreateCampaignModal({ open, onClose, onCreate }) {
                 className="w-full px-4 py-3 bg-neutral-800/50 border border-neutral-700 rounded-xl text-white focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all appearance-none cursor-pointer"
                 disabled={loading}
               >
-                <option value="keywords">Keywords - Generate repos using AI</option>
-                <option value="apify">Apify URLs - Scrape from Apify actors</option>
-                <option value="va">VA Campaign - Android automation repos</option>
+                {/* GitHub categories removed */}
                 <option value="upwork">Live Upwork Jobs - Generate repos from Upwork</option>
                 <option value="scrape-jobs">Scrape Jobs - Create repos from specific Upwork job URLs</option>
               </select>
@@ -856,7 +851,8 @@ export default function CreateCampaignModal({ open, onClose, onCreate }) {
             </div>
           )}
 
-          {/* Account Group Selection */}
+          {/* Account Group Selection (Hidden - GitHub features removed) */}
+          {/* 
           <div>
             <label className="block text-sm font-medium text-neutral-300 mb-2">
               Account Group <span className="text-red-400">*</span>
@@ -885,7 +881,8 @@ export default function CreateCampaignModal({ open, onClose, onCreate }) {
                 ⚠️ No account groups found. Please create one first.
               </p>
             )}
-          </div>
+          </div> 
+          */}
 
           {/* ChatGPT Account Selection */}
           <div>
@@ -937,7 +934,7 @@ export default function CreateCampaignModal({ open, onClose, onCreate }) {
             <button
               type="submit"
               className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold transition-all shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              disabled={loading || accountGroups.length === 0}
+              disabled={loading}
             >
               {loading ? (
                 <>

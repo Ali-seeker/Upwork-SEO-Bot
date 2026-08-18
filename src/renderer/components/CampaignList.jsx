@@ -39,6 +39,10 @@ export default function CampaignList({ campaigns, onStart, onStop, onDelete }) {
   const getItemCount = (campaign) => {
     if (campaign.category === 'apify' && campaign.apifyUrls) {
       return campaign.apifyUrls.split('\n').filter(line => line.trim()).length;
+    } else if (campaign.category === 'upwork' && campaign.upworkSearchInput) {
+      return 1;
+    } else if (campaign.category === 'scrape-jobs' && campaign.scrapeJobUrls) {
+      return campaign.scrapeJobUrls.split('\n').filter(line => line.trim()).length;
     } else if (campaign.keywords) {
       if (typeof campaign.keywords === 'string') {
         return campaign.keywords.split('\n').filter(line => line.trim()).length;
@@ -196,6 +200,16 @@ export default function CampaignList({ campaigns, onStart, onStop, onDelete }) {
                                   <Link className="w-3 h-3" />
                                   Apify
                                 </>
+                              ) : campaign.category === 'upwork' ? (
+                                <>
+                                  <Search className="w-3 h-3" />
+                                  Upwork Search
+                                </>
+                              ) : campaign.category === 'scrape-jobs' ? (
+                                <>
+                                  <Link className="w-3 h-3" />
+                                  Scrape Jobs
+                                </>
                               ) : (
                                 <>
                                   <Hash className="w-3 h-3" />
@@ -206,7 +220,7 @@ export default function CampaignList({ campaigns, onStart, onStop, onDelete }) {
                           )}
                         </div>
                         <p className="text-xs text-neutral-500">
-                          {itemCount} {campaign.category === 'apify' ? 'URL' : 'keyword'}{itemCount !== 1 ? 's' : ''}
+                          {itemCount} {campaign.category === 'apify' ? 'URL' : campaign.category === 'upwork' ? 'Search' : campaign.category === 'scrape-jobs' ? 'URL' : 'keyword'}{itemCount !== 1 ? 's' : ''}
                           {questionCount > 0 && ` • ${questionCount} question${questionCount !== 1 ? 's' : ''}`}
                           {isRunning && ' • Click to view status'}
                           {hasResults && isCompleted && ' • Click to view results'}

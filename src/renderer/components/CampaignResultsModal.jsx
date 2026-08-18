@@ -60,47 +60,7 @@ export default function CampaignResultsModal({ campaign, onClose, onRepoDeleted 
   };
 
   const handleDeleteRepo = async (result) => {
-    if (!result.repoUrl || !result.account) return;
-
-    const repoName = result.repoName || result.repoUrl.split('/').pop();
-    
-    if (!confirm(`Are you sure you want to delete the repository "${repoName}"?\n\nThis action cannot be undone!`)) {
-      return;
-    }
-
-    setDeletingRepos(prev => new Set([...prev, result.repoUrl]));
-
-    try {
-      // Extract owner from repo URL
-      const urlParts = result.repoUrl.split('/');
-      const owner = urlParts[urlParts.length - 2];
-      
-      // Get the account ID from the campaign's account group
-      const accounts = await window.api.listGithubAccounts(campaign.accountGroupId);
-      const account = accounts.find(acc => acc.username === result.account);
-      
-      if (!account) {
-        throw new Error('Account not found');
-      }
-
-      await window.api.deleteGithubRepo(owner, repoName, account.id);
-      
-      // Notify parent component
-      if (onRepoDeleted) {
-        onRepoDeleted(result.repoUrl);
-      }
-
-      alert(`Repository "${repoName}" has been deleted successfully!`);
-    } catch (error) {
-      console.error('Failed to delete repository:', error);
-      alert(`Failed to delete repository: ${error.message}`);
-    } finally {
-      setDeletingRepos(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(result.repoUrl);
-        return newSet;
-      });
-    }
+    alert("Repository deletion is disabled as GitHub integration has been removed.");
   };
 
   const results = campaign.results || [];
@@ -260,21 +220,7 @@ export default function CampaignResultsModal({ campaign, onClose, onRepoDeleted 
                         )}
                       </div>
 
-                      {/* Delete Button - Only for successful repos */}
-                      {isSuccess && (
-                        <button
-                          onClick={() => handleDeleteRepo(result)}
-                          disabled={isDeleting}
-                          className="flex-shrink-0 p-2 rounded-lg bg-neutral-800 hover:bg-red-500/10 border border-neutral-700 hover:border-red-500 text-neutral-400 hover:text-red-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                          title="Delete Repository"
-                        >
-                          {isDeleting ? (
-                            <Loader className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <Trash2 className="w-4 h-4" />
-                          )}
-                        </button>
-                      )}
+
                     </div>
                   </motion.div>
                 );

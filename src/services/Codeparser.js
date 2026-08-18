@@ -1,6 +1,6 @@
 /**
- * ENHANCED CODE PARSER & GITHUB PUSHER
- * Handles multiple GPT response formats and pushes to GitHub with directory creation
+ * ENHANCED CODE PARSER
+ * Handles multiple GPT response formats
  */
 
 import axios from 'axios';
@@ -217,133 +217,6 @@ function cleanFilePath(filepath, repoName = '') {
   return cleaned;
 }
 
-/**
- * Push a single file to GitHub (creates directories automatically)
- */
-async function pushFileToGitHub({ owner, repo, filepath, content, token, logFn = console.log }) {
-  try {
-    const b64Content = Buffer.from(content, 'utf-8').toString('base64');
-    
-    const data = JSON.stringify({
-      message: `feat: add ${filepath}`,
-      content: b64Content
-    });
-    
-    const config = {
-      method: 'put',
-      url: `https://api.github.com/repos/${owner}/${repo}/contents/${filepath}`,
-      headers: { 
-        'Accept': 'application/vnd.github+json',
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      data: data
-    };
-    
-    await axios.request(config);
-    return { success: true, filepath };
-    
-  } catch (error) {
-    const errorMsg = error.response?.data?.message || error.message;
-    return { success: false, filepath, error: errorMsg };
-  }
-}
-
-/**
- * Push all files to GitHub with retry and progress tracking
- */
-async function pushAllFilesToGitHub({ 
-  owner, 
-  repo, 
-  files, 
-  token, 
-  logFn = console.log,
-  maxRetries = 3 
-}) {
-  logFn(`\n📦 ===== PUSHING ${files.length} FILES TO GITHUB =====`);
-  logFn(`👤 Owner: ${owner}`);
-  logFn(`📦 Repository: ${repo}`);
-  logFn(`📁 Total files: ${files.length}\n`);
-  
-  const results = {
-    total: files.length,
-    successful: 0,
-    failed: 0,
-    details: []
-  };
-  
-  // Sort files by depth (shallow first)
-  const sortedFiles = [...files].sort((a, b) => {
-    const depthA = (a.filepath.match(/\//g) || []).length;
-    const depthB = (b.filepath.match(/\//g) || []).length;
-    return depthA - depthB;
-  });
-  
-  const delayMs = 1200; // Rate limiting delay
-  
-  for (let i = 0; i < sortedFiles.length; i++) {
-    const file = sortedFiles[i];
-    
-    logFn(`\n[${i + 1}/${sortedFiles.length}] ${file.filepath}`);
-    logFn(`  📏 Size: ${file.code.length} chars`);
-    
-    let success = false;
-    let lastError = null;
-    
-    // Retry logic
-    for (let attempt = 1; attempt <= maxRetries && !success; attempt++) {
-      if (attempt > 1) {
-        logFn(`  🔄 Retry ${attempt}/${maxRetries}...`);
-        await new Promise(resolve => setTimeout(resolve, delayMs * attempt));
-      }
-      
-      const result = await pushFileToGitHub({
-        owner,
-        repo,
-        filepath: file.filepath,
-        content: file.code,
-        token,
-        logFn
-      });
-      
-      if (result.success) {
-        logFn(`  ✅ Pushed successfully`);
-        results.successful++;
-        results.details.push(result);
-        success = true;
-      } else {
-        lastError = result.error;
-        if (attempt === maxRetries) {
-          logFn(`  ❌ Failed: ${lastError}`);
-          results.failed++;
-          results.details.push(result);
-        }
-      }
-    }
-    
-    // Delay between files (except last)
-    if (i < sortedFiles.length - 1) {
-      await new Promise(resolve => setTimeout(resolve, delayMs));
-    }
-  }
-  
-  logFn(`\n📊 ===== PUSH SUMMARY =====`);
-  logFn(`✅ Successful: ${results.successful}/${results.total}`);
-  logFn(`❌ Failed: ${results.failed}/${results.total}`);
-  
-  if (results.failed > 0) {
-    logFn('\n❌ Failed files:');
-    results.details
-      .filter(r => !r.success)
-      .forEach(r => logFn(`  - ${r.filepath}: ${r.error}`));
-  } else {
-    logFn('🎉 All files pushed successfully!');
-  }
-  
-  logFn(`==========================\n`);
-  
-  return results;
-}
 
 /**
  * Display file structure as a tree
@@ -394,8 +267,6 @@ function logFileStructure(files, logFn = console.log) {
 export {
   parseCodeResponse,
   cleanFilePath,
-  pushFileToGitHub,
-  pushAllFilesToGitHub,
   logFileStructure,
   validateFiles
 };

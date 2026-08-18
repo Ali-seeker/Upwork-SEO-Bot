@@ -108,91 +108,7 @@ ipcMain.handle('campaigns:stop', async (_event, { id }) => {
   }
 });
 
-// ==================== Account Groups Operations ====================
-ipcMain.handle('accountGroups:list', async () => {
-  try {
-    //console.log('📋 Listing account groups');
-    const groups = await storage.getAccountGroups();
-    //console.log(`✅ Found ${groups.length} account groups`);
-    return groups;
-  } catch (error) {
-    console.error('❌ Error listing account groups:', error);
-    throw error;
-  }
-});
 
-ipcMain.handle('accountGroups:create', async (_event, data) => {
-  try {
-    //console.log('➕ Creating account group:', data.name);
-    const group = await storage.createAccountGroup(data);
-    //console.log('✅ Account group created:', group.id);
-    return group;
-  } catch (error) {
-    console.error('❌ Error creating account group:', error);
-    throw error;
-  }
-});
-
-ipcMain.handle('accountGroups:delete', async (_event, id) => {
-  try {
-    //console.log('🗑️ Deleting account group:', id);
-    await storage.deleteAccountGroup(id);
-    //console.log('✅ Account group deleted');
-    return { ok: true };
-  } catch (error) {
-    console.error('❌ Error deleting account group:', error);
-    throw error;
-  }
-});
-
-// ==================== GitHub Accounts Operations ====================
-ipcMain.handle('githubAccounts:list', async (_event, groupId) => {
-  try {
-    //console.log('📋 Listing GitHub accounts for group:', groupId);
-    const accounts = await storage.getGithubAccounts(groupId);
-    //console.log(`✅ Found ${accounts.length} GitHub accounts`);
-    return accounts;
-  } catch (error) {
-    console.error('❌ Error listing GitHub accounts:', error);
-    throw error;
-  }
-});
-
-ipcMain.handle('githubAccounts:create', async (_event, data) => {
-  try {
-    //console.log('➕ Creating GitHub account:', data.username);
-    const account = await storage.createGithubAccount(data);
-    //console.log('✅ GitHub account created:', account.id);
-    return account;
-  } catch (error) {
-    console.error('❌ Error creating GitHub account:', error);
-    throw error;
-  }
-});
-
-ipcMain.handle('githubAccounts:update', async (_event, id, updates) => {
-  try {
-    //console.log('📝 Updating GitHub account:', id);
-    const account = await storage.updateGithubAccount(id, updates);
-    //console.log('✅ GitHub account updated');
-    return account;
-  } catch (error) {
-    console.error('❌ Error updating GitHub account:', error);
-    throw error;
-  }
-});
-
-ipcMain.handle('githubAccounts:delete', async (_event, id) => {
-  try {
-    //console.log('🗑️ Deleting GitHub account:', id);
-    await storage.deleteGithubAccount(id);
-    //console.log('✅ GitHub account deleted');
-    return { ok: true };
-  } catch (error) {
-    console.error('❌ Error deleting GitHub account:', error);
-    throw error;
-  }
-});
 
 // ==================== Logs ====================
 ipcMain.handle('logs:get', async (_event, { id, since = 0 }) => {
@@ -220,29 +136,7 @@ ipcMain.handle('logs:clear', async (_event, { id }) => {
 });
 // Add this after the existing handlers, before the final console.log
 
-// ==================== GitHub Repository Operations ====================
-ipcMain.handle('github:deleteRepo', async (_event, { owner, repo, accountId }) => {
-  try {
-    //console.log('🗑️ Deleting GitHub repository:', repo);
-    //console.log('  Owner:', owner);
-    //console.log('  Account ID:', accountId);
-    
-    // Get the account token
-    const token = await storage.getGithubAccountToken(accountId);
-    
-    // Import deleteRepository from githubService
-    const { deleteRepository } = await import('../services/githubService.js');
-    
-    // Delete the repository
-    await deleteRepository({ owner, repo, token });
-    
-    //console.log('✅ Repository deleted successfully');
-    return { ok: true };
-  } catch (error) {
-    console.error('❌ Error deleting repository:', error);
-    throw error;
-  }
-});
+
 
 // Add this near the end, before the final console.log
 
@@ -698,53 +592,7 @@ ipcMain.handle('upworkCampaigns:delete', async (_event, id) => {
     throw error;
   }
 });
-ipcMain.handle('proxyBulks:list', async () => {
-  try {
-    //console.log('📋 Listing proxy bulks');
-    const bulks = await storage.getProxyBulks();
-    //console.log(`✅ Found ${bulks.length} proxy bulks`);
-    return bulks;
-  } catch (error) {
-    console.error('❌ Error listing proxy bulks:', error);
-    throw error;
-  }
-});
 
-ipcMain.handle('proxyBulks:create', async (_event, data) => {
-  try {
-    //console.log('➕ Creating proxy bulk:', data.name);
-    const bulk = await storage.createProxyBulk(data);
-    //console.log('✅ Proxy bulk created:', bulk.id);
-    return bulk;
-  } catch (error) {
-    console.error('❌ Error creating proxy bulk:', error);
-    throw error;
-  }
-});
-
-ipcMain.handle('proxyBulks:update', async (_event, id, updates) => {
-  try {
-    //console.log('📝 Updating proxy bulk:', id);
-    const bulk = await storage.updateProxyBulk(id, updates);
-    //console.log('✅ Proxy bulk updated');
-    return bulk;
-  } catch (error) {
-    console.error('❌ Error updating proxy bulk:', error);
-    throw error;
-  }
-});
-
-ipcMain.handle('proxyBulks:delete', async (_event, id) => {
-  try {
-    //console.log('🗑️ Deleting proxy bulk:', id);
-    await storage.deleteProxyBulk(id);
-    //console.log('✅ Proxy bulk deleted');
-    return { ok: true };
-  } catch (error) {
-    console.error('❌ Error deleting proxy bulk:', error);
-    throw error;
-  }
-});
 ipcMain.handle('scrapeJobsCampaigns:list', async () => {
   try {
     //console.log('📋 Listing scrape-jobs campaigns');

@@ -12,41 +12,7 @@ export default function RepoStatusModal({ campaign, onClose }) {
   const inProgressCount = (campaign.progress?.total || 0) - results.length;
 
   const handleDeleteRepo = async (repoUrl, repoName) => {
-    if (!confirm(`Are you sure you want to delete the repository "${repoName}"?`)) {
-      return;
-    }
-
-    try {
-      setDeletingRepo(repoUrl);
-      const accounts = await window.api.listGithubAccounts();
-      
-      // Extract repo name from URL
-      const match = repoUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/);
-      if (!match) {
-        throw new Error('Invalid repository URL');
-      }
-      
-      const [, owner, repo] = match;
-      const account = accounts.find(acc => acc.username.toLowerCase() === owner.toLowerCase());
-      
-      if (!account) {
-        throw new Error(`No GitHub account found for username: ${owner}`);
-      }
-
-      await window.api.deleteGithubRepo(account.id, owner, repo);
-      
-      // Update campaign results to remove the deleted repo
-      const updatedResults = campaign.results.filter(r => r.repoUrl !== repoUrl);
-      campaign.results = updatedResults;
-      
-      // Trigger re-render by closing and reopening if needed
-      onClose();
-    } catch (error) {
-      console.error('Failed to delete repository:', error);
-      alert(`Failed to delete repository: ${error.message}`);
-    } finally {
-      setDeletingRepo(null);
-    }
+    alert("Repository deletion is disabled as GitHub integration has been removed.");
   };
 
   return (
@@ -165,21 +131,7 @@ export default function RepoStatusModal({ campaign, onClose }) {
                         </div>
                       </div>
 
-                      {/* Delete Button - Only for successful repos */}
-                      <button
-                        onClick={() => handleDeleteRepo(result.repoUrl, result.repoName)}
-                        disabled={deletingRepo === result.repoUrl}
-                        className="flex-shrink-0 px-3 py-1.5 text-xs font-medium text-red-400 hover:text-white bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/30 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
-                      >
-                        {deletingRepo === result.repoUrl ? (
-                          <>
-                            <Loader className="w-3.5 h-3.5 animate-spin" />
-                            Deleting...
-                          </>
-                        ) : (
-                          'Delete'
-                        )}
-                      </button>
+
                     </div>
                   </motion.div>
                 ))}

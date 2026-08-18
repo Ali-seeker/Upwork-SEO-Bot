@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-import { LayoutDashboard, Github, Settings, FileText, Bot, Sparkles, Users, Star, Search, Eye, Network } from 'lucide-react';
+import { LayoutDashboard, Settings, FileText, Bot, Sparkles, Users, Star, Search, Eye, Network, Zap } from 'lucide-react';
 
 
 const navItemClass = ({ isActive }) =>
@@ -50,17 +50,18 @@ export default function Sidebar() {
           )}
         </NavLink>
 
-        <NavLink to="/github-repo-generator" className={navItemClass}>
+        <NavLink to="/campaigns" className={navItemClass}>
           {({ isActive }) => (
             <>
               {isActive && (
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-r-full" />
               )}
-              <Github className="w-4 h-4 group-hover:scale-110 transition-transform" />
-              <span className="font-medium">Repo Generator</span>
+              <Zap className="w-4 h-4 group-hover:scale-110 transition-transform" />
+              <span className="font-medium">Campaigns</span>
             </>
           )}
         </NavLink>
+
 
         {/* <NavLink to="/stars-campaign" className={navItemClass}>
           {({ isActive }) => (
@@ -99,30 +100,8 @@ export default function Sidebar() {
           )}
         </NavLink> */}
 
-        <NavLink to="/proxies" className={navItemClass}>
-          {({ isActive }) => (
-            <>
-              {isActive && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-r-full" />
-              )}
-              <Network className="w-4 h-4 group-hover:scale-110 transition-transform" />
-              <span className="font-medium">Proxies</span>
-            </>
-          )}
-        </NavLink>
 
 
-        <NavLink to="/account-groups" className={navItemClass}>
-          {({ isActive }) => (
-            <>
-              {isActive && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-r-full" />
-              )}
-              <Users className="w-4 h-4 group-hover:scale-110 transition-transform" />
-              <span className="font-medium">Account Groups</span>
-            </>
-          )}
-        </NavLink>
 
         <div className="my-4 border-t border-white/5" />
 

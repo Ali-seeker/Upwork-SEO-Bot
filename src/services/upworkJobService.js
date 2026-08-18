@@ -27,7 +27,7 @@ class UpworkJobService {
    * @param {number} limit - Maximum number of jobs to fetch
    * @returns {Promise<Array>} Array of job objects
    */
-  async fetchJobs(query, limit = 10) {
+  async fetchJobs(query, limit = 10, attempt = 1) {
     console.log(`🔍 Fetching Upwork jobs for query: "${query}"`);
     
     // Detect URL mode and extract parameters
@@ -104,6 +104,30 @@ class UpworkJobService {
               let jobs = JSON.parse(dataBuffer);
               console.log(`✅ Successfully fetched ${jobs.length} jobs`);
 
+              // === NEW: Auto-retry on authentication failure ===
+              const hadAuthError = /401|403|unauthoriz|forbidden|expired|token refresh failed/i.test(errorBuffer || '');
+              
+              if (jobs.length === 0 && hadAuthError && attempt === 1) {
+                console.log('🔄 Authentication error detected during fetchJobs. Triggering authbot...');
+                (async () => {
+                  const refreshed = await this._ensureAuthFresh();
+                  if (refreshed) {
+                    console.log('✅ Auth refreshed! Retrying fetchJobs...');
+                    try {
+                      const retryJobs = await this.fetchJobs(query, limit, 2);
+                      resolve(retryJobs);
+                    } catch (retryErr) {
+                      reject(retryErr);
+                    }
+                  } else {
+                    console.error('❌ Failed to refresh auth. Returning empty jobs array.');
+                    resolve(jobs);
+                  }
+                })();
+                return;
+              }
+              // ===============================================
+
               // If a URL required payment verification, validate using job details
               const needsPaymentVerify = Boolean(isUrl && urlParams?.paymentVerified);
               if (!needsPaymentVerify || jobs.length === 0) {
@@ -130,6 +154,27 @@ class UpworkJobService {
           } else {
             console.error(`❌ Python scraper exited with code ${code}`);
             console.error('Error output:', errorBuffer);
+            
+            const hadAuthError = /401|403|unauthoriz|forbidden|expired|token refresh failed/i.test(errorBuffer || '');
+            if (hadAuthError && attempt === 1) {
+              console.log('🔄 Authentication error detected (scraper crashed). Triggering authbot...');
+              (async () => {
+                const refreshed = await this._ensureAuthFresh();
+                if (refreshed) {
+                  console.log('✅ Auth refreshed! Retrying fetchJobs...');
+                  try {
+                    const retryJobs = await this.fetchJobs(query, limit, 2);
+                    resolve(retryJobs);
+                  } catch (retryErr) {
+                    reject(retryErr);
+                  }
+                } else {
+                  reject(new Error(`Scraper failed with auth error: ${errorBuffer}`));
+                }
+              })();
+              return;
+            }
+            
             reject(new Error(`Scraper failed with code ${code}: ${errorBuffer}`));
           }
         });
