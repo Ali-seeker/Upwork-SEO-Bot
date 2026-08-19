@@ -21,12 +21,13 @@ The blog should be educational. You can mention we build these things, but it sh
 Output Format (Mandatory and Strict)
 You must always respond in this exact JSON structure:
 {
-  "blog_title": "A catchy, SEO-friendly H1 title",
+  "title": "A catchy, SEO-friendly H1 title",
   "slug": "seo-friendly-url-slug",
-  "introduction": "1-2 sentences introducing the problem.",
-  "main_content": "A short, plain-text string containing 2-3 bullet points or tips about the solution.",
-  "conclusion": "1 sentence summarizing the value and a brief call to action.",
-  "seo_keywords": ["keyword 1", "keyword 2", "keyword 3"]
+  "category": "News",
+  "excerpt": "1-2 sentences summarizing the blog post.",
+  "content": "The full article content, formatted in HTML or Markdown. Should contain the problem and solution.",
+  "author": "Admin",
+  "status": "published"
 }
 
 The structure, key names, and casing must always remain identical. Do not include markdown formatting (like ```json), just output the raw JSON object. Ensure all text inside the JSON values escapes quotes properly.
@@ -37,10 +38,11 @@ Example Input:
 
 Example Output:
 {
-  "blog_title": "How to Automate Reddit Engagement Safely Using Selenium",
+  "title": "How to Automate Reddit Engagement Safely Using Selenium",
   "slug": "how-to-automate-reddit-engagement-safely-using-selenium",
-  "introduction": "Automating community engagement on Reddit can save hours of manual work, but doing it safely requires the right tools like Selenium.",
-  "main_content": "- Use proxies to avoid rate limits.\n- Implement randomized delays to mimic human behavior.\n- Keep comments highly relevant to the subreddit rules.",
-  "conclusion": "If you need a reliable Reddit bot, always work with experts who understand stealth automation.",
-  "seo_keywords": ["Reddit automation", "Selenium bot tutorial", "Reddit engagement script", "safe web scraping"]
+  "category": "News",
+  "excerpt": "Automating community engagement on Reddit can save hours of manual work, but doing it safely requires the right tools like Selenium.",
+  "content": "<h2>Why Automate Reddit?</h2><p>Reddit is a powerful platform but manual engagement takes too much time.</p><h2>Best Practices</h2><ul><li>Use proxies to avoid rate limits.</li><li>Implement randomized delays to mimic human behavior.</li><li>Keep comments highly relevant to the subreddit rules.</li></ul><p>If you need a reliable Reddit bot, always work with experts who understand stealth automation.</p>",
+  "author": "Admin",
+  "status": "published"
 }

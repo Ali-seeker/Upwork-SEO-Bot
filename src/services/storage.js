@@ -511,6 +511,74 @@ class Storage {
     return true;
   }
 
+  async getPendingContentJobs() {
+    await this.ensureConnected();
+    const res = await this.pool.query("SELECT * FROM jobs_selected WHERE content_status = 'pending' ORDER BY created_at ASC");
+    return res.rows;
+  }
+
+  async updateContentStatus(jobId, status) {
+    await this.ensureConnected();
+    await this.pool.query("UPDATE jobs_selected SET content_status = $1 WHERE id = $2", [status, jobId]);
+    return true;
+  }
+
+  async saveProduct(jobId, content) {
+    await this.ensureConnected();
+    const id = uuidv4();
+    await this.pool.query(
+      `INSERT INTO product (
+        id, "source_job_id", "name", "slug", "category", "shortDesc", "description",
+        "problem", "solution", "valueProp", "targetCustomer", "features", "technologies",
+        "status", "createdAt", "updatedAt"
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+      ON CONFLICT (id) DO NOTHING`,
+      [
+        id, jobId, content.name || 'Generated Product', content.slug || id, content.category || 'Software',
+        content.shortDesc || '', content.description || '', content.problem || '', content.solution || '',
+        content.valueProp || '', content.targetCustomer || '', content.features || [], content.technologies || [],
+        content.status || 'draft', new Date(), new Date()
+      ]
+    );
+    return true;
+  }
+
+  async saveService(jobId, content) {
+    await this.ensureConnected();
+    const id = uuidv4();
+    await this.pool.query(
+      `INSERT INTO services (
+        id, "source_job_id", "name", "slug", "category", "shortDesc", "description",
+        "problem", "benefits", "deliverables", "process", "status", "createdAt", "updatedAt"
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+      ON CONFLICT (id) DO NOTHING`,
+      [
+        id, jobId, content.name || 'Generated Service', content.slug || id, content.category || 'Consulting',
+        content.shortDesc || '', content.description || '', content.problem || '', content.benefits || [],
+        content.deliverables || [], content.process || [], content.status || 'draft', new Date(), new Date()
+      ]
+    );
+    return true;
+  }
+
+  async saveBlog(jobId, content) {
+    await this.ensureConnected();
+    const id = uuidv4();
+    await this.pool.query(
+      `INSERT INTO blog (
+        id, "source_job_id", "title", "slug", "category", "excerpt", "content",
+        "author", "status", "createdAt", "updatedAt"
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      ON CONFLICT (id) DO NOTHING`,
+      [
+        id, jobId, content.title || 'Generated Blog', content.slug || id, content.category || 'News',
+        content.excerpt || '', content.content || '', content.author || 'Admin', content.status || 'draft',
+        new Date(), new Date()
+      ]
+    );
+    return true;
+  }
+
   // --- Helpers ---
   normalizeString(str) {
     if (!str) return '';

@@ -1224,68 +1224,7 @@ export class UpworkEvaluator {
     await this.ensureLoggedIn(onProgress);
 
     // Setup initial prompt
-    onProgress?.('Sending base instructions to ChatGPT...');
-    let promptBase = '';
-    try {
-      const promptPath = path.join(app.getAppPath(), 'prompts', 'upwork-saas-filter.txt');
-      promptBase = fs.readFileSync(promptPath, 'utf8');
-    } catch (err) {
-      console.error("Could not load prompt", err);
-      promptBase = "Evaluate if this job is for building an open source automation or scraper tool. Say Yes or No. Job: ";
-    }
-    
-    const initialPrompt = `I am going to provide you with job descriptions one by one. Please evaluate them based on the following criteria and ALWAYS respond strictly using the JSON format specified below.\n\nHere are the criteria:\n\n${promptBase}\n\nAcknowledge if you understand by replying with "Understood".`;
-    
-    try {
-        await this.page.waitForSelector('#prompt-textarea', { timeout: 15000 });
-        
-        // Dismiss any "Log in or sign up" modals
-        await this.page.evaluate(() => {
-          const dialogs = document.querySelectorAll('[role="dialog"]');
-          dialogs.forEach(dialog => {
-            const closeBtn = dialog.querySelector('button');
-            if (closeBtn) closeBtn.click();
-          });
-        });
-        await new Promise(resolve => setTimeout(resolve, 500));
-        await this.page.keyboard.press('Escape');
-
-        const textarea = await this.page.$('#prompt-textarea');
-        if (textarea) {
-          await textarea.focus();
-          
-          // Wait a moment to see if focusing triggered the "Log in or sign up" modal
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          
-          // If the modal popped up, pause the script so the user can log in
-          await this.ensureLoggedIn(onProgress);
-
-          // Focus again in case the user clicked around or the page reloaded
-          const textareaAfterLogin = await this.page.$('#prompt-textarea');
-          if (textareaAfterLogin) await textareaAfterLogin.focus();
-
-          await this.page.evaluate((text) => {
-            document.execCommand('insertText', false, text);
-          }, initialPrompt);
-          
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          
-          const sendButton = await this.page.$('button[data-testid="send-button"]');
-          if (sendButton) {
-            await this.page.evaluate((btn) => btn.click(), sendButton);
-          } else {
-            await this.page.evaluate(() => {
-                const form = document.querySelector('form');
-                if (form) form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
-            });
-          }
-          
-          onProgress?.('Waiting for ChatGPT acknowledgment...');
-          await waitForResponseComplete(this.page, 60000);
-        }
-    } catch(err) {
-        console.error("Error setting up initial session prompt:", err);
-    }
+    onProgress?.('Logged into ChatGPT successfully. Ready to evaluate jobs.');
   }
 
   async evaluateJob(job, onProgress) {
@@ -1296,8 +1235,17 @@ export class UpworkEvaluator {
 
     onProgress?.('Preparing prompt...');
 
-    // Load prompt (handled in startSession now, we just format the job)
-    const fullPrompt = `Job Title: ${job.title}\n\nJob Description: ${job.description}`;
+    let promptBase = '';
+    try {
+      const promptPath = path.join(app.getAppPath(), 'prompts', 'upwork-saas-filter.txt');
+      promptBase = fs.readFileSync(promptPath, 'utf8');
+    } catch (err) {
+      console.error("Could not load prompt", err);
+      promptBase = "Evaluate if this job is for building an open source automation or scraper tool. Say Yes or No.";
+    }
+
+    // Combine criteria with job data
+    const fullPrompt = `Please evaluate the following job based on these criteria and strictly respond with "Yes" or "No".\n\nHere are the criteria:\n\n${promptBase}\n\nJob Title: ${job.title}\n\nJob Description: ${job.description}`;
 
     onProgress?.('Typing prompt...');
 
@@ -1374,6 +1322,64 @@ export class UpworkEvaluator {
       return "Yes";
     }
     return "No";
+  }
+
+  async generateContent(promptText, onProgress) {
+    if (!this.page) return "";
+
+    await this.ensureLoggedIn(onProgress);
+
+    onProgress?.('Typing content generation prompt...');
+
+    const textarea = await this.page.$('#prompt-textarea');
+    if (textarea) {
+      await textarea.focus();
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      await this.ensureLoggedIn(onProgress);
+
+      const textareaAfterLogin = await this.page.$('#prompt-textarea');
+      if (textareaAfterLogin) await textareaAfterLogin.focus();
+
+      await this.page.evaluate((text) => {
+        document.execCommand('insertText', false, text);
+      }, promptText);
+      
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const sendButton = await this.page.$('button[data-testid="send-button"]');
+      if (sendButton) {
+        await this.page.evaluate((btn) => btn.click(), sendButton);
+      } else {
+        await this.page.evaluate(() => {
+            const form = document.querySelector('form');
+            if (form) form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+        });
+      }
+    } else {
+      return "";
+    }
+
+    onProgress?.('Waiting for ChatGPT content generation...');
+    await new Promise(resolve => setTimeout(resolve, 5000));
+    await waitForResponseComplete(this.page, 120000); // 2 mins for content
+
+    const extraction = await extractChatGPTResponse(this.page);
+    let lastResponse = "";
+    
+    if (extraction.success && extraction.text) {
+      lastResponse = extraction.text;
+    } else if (extraction.success && extraction.fullMessage) {
+      lastResponse = extraction.fullMessage;
+    } else {
+      lastResponse = await this.page.evaluate(() => {
+        const msgs = Array.from(document.querySelectorAll('article[data-testid^="conversation-turn"], div[data-message-author-role="assistant"]'));
+        if (msgs.length === 0) return "";
+        const lastMsg = msgs[msgs.length - 1];
+        return lastMsg.innerText || lastMsg.textContent || "";
+      });
+    }
+
+    return lastResponse;
   }
 
   async closeSession() {

@@ -21,12 +21,16 @@ Keep descriptions sharp, persuasive, and to the point.
 Output Format (Mandatory and Strict)
 You must always respond in this exact JSON structure:
 {
-  "service_name": "A catchy, SEO-friendly name for the service (e.g., 'Custom Real Estate Scraping Services')",
+  "name": "A catchy, SEO-friendly name for the service (e.g., 'Custom Real Estate Scraping Services')",
   "slug": "seo-friendly-url-slug",
-  "service_description": "A persuasive paragraph describing what we build and how it solves the client's problem.",
+  "category": "Consulting",
+  "shortDesc": "A one-sentence persuasive tagline for this service.",
+  "description": "A persuasive, full-length description describing what we build and how it solves the client's problem.",
+  "problem": "The exact business or technical problem this service solves.",
+  "benefits": ["Benefit 1", "Benefit 2", "Benefit 3"],
   "deliverables": ["Deliverable 1", "Deliverable 2", "Deliverable 3"],
-  "why_choose_us": "A short sentence on why our agency is the best fit for this specific tech stack/problem.",
-  "seo_keywords": ["keyword 1", "keyword 2", "keyword 3"]
+  "process": ["Step 1", "Step 2", "Step 3"],
+  "status": "published"
 }
 
 The structure, key names, and casing must always remain identical. Do not include markdown formatting (like ```json), just output the raw JSON object.
@@ -37,10 +41,14 @@ Example Input:
 
 Example Output:
 {
-  "service_name": "Custom Reddit Automation & Selenium Bot Development",
+  "name": "Custom Reddit Automation & Selenium Bot Development",
   "slug": "custom-reddit-automation-selenium-bot-development",
-  "service_description": "We specialize in building custom Selenium bots to automate engagement, outreach, and monitoring on Reddit. Our team delivers highly reliable, proxy-enabled scripts tailored to your community growth needs.",
+  "category": "Consulting",
+  "shortDesc": "Automate your engagement on Reddit with stealthy Selenium bots.",
+  "description": "We specialize in building custom Selenium bots to automate engagement, outreach, and monitoring on Reddit. Our team delivers highly reliable, proxy-enabled scripts tailored to your community growth needs.",
+  "problem": "Manual engagement on Reddit is time-consuming and difficult to scale without getting banned.",
+  "benefits": ["Save hundreds of hours", "Scale your community outreach", "Bypass anti-bot protections securely"],
   "deliverables": ["Custom Selenium Bot Script", "Proxy & Anti-ban Integration", "Deployment & Maintenance Support"],
-  "why_choose_us": "We have extensive experience bypassing Reddit's anti-bot protections using advanced Selenium stealth techniques.",
-  "seo_keywords": ["Reddit automation service", "hire Selenium developer", "custom Reddit bot development", "social media automation agency"]
+  "process": ["Discovery & Requirements", "Bot Architecture Design", "Development & Testing", "Deployment"],
+  "status": "published"
 }

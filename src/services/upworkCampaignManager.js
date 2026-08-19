@@ -2,8 +2,8 @@ import EventEmitter from 'events';
 import { spawn } from 'child_process';
 import path from 'path';
 import { storage } from './storage.js';
-
 import { UpworkEvaluator } from './chatgptScraper.js';
+import { ContentGenerator } from './contentGenerator.js';
 import { execFile } from 'child_process';
 
 
@@ -166,6 +166,8 @@ class UpworkCampaignManager extends EventEmitter {
       return;
     }
 
+    const contentGenerator = new ContentGenerator(evaluator, campaignId, (msg) => this.log(campaignId, 'info', msg, 'upwork'));
+
     const intervalId = setInterval(async () => {
       // Prevent concurrent evaluations in same interval
       if (evaluator.isEvaluating) return;
@@ -191,6 +193,13 @@ class UpworkCampaignManager extends EventEmitter {
               this.log(campaignId, 'info', `✅ Job saved to PostgreSQL (jobs_selected)`, 'upwork');
             }
           }
+
+          // After evaluating all unevaluated jobs in this batch, process any pending content generation
+          await contentGenerator.processPendingJobs();
+        } else {
+          // If no unevaluated jobs were found, we can still check for pending content generation
+          // just in case there are leftovers in the DB
+          await contentGenerator.processPendingJobs();
         }
       } catch (err) {
         this.log(campaignId, 'error', `Evaluation error: ${err.message}`, 'upwork');

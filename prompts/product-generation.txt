@@ -21,13 +21,18 @@ Keep descriptions sharp and to the point.
 Output Format (Mandatory and Strict)
 You must always respond in this exact JSON structure:
 {
-  "title": "A catchy, SEO-friendly name for the product (e.g., 'Automated Etsy Listing Scraper Tool')",
+  "name": "A catchy, SEO-friendly name for the product (e.g., 'Automated Etsy Listing Scraper Tool')",
   "slug": "seo-friendly-url-slug",
-  "tagline": "A one-sentence punchy tagline",
+  "category": "Software",
+  "shortDesc": "A one-sentence punchy tagline or short description",
+  "description": "Full detailed description of the software product, its value, and how it works.",
+  "problem": "The exact problem this software solves.",
+  "solution": "How this software solves the problem.",
+  "valueProp": "The main value proposition.",
+  "targetCustomer": "Who this tool is for",
   "features": ["Feature 1", "Feature 2", "Feature 3"],
-  "target_audience": "Who this tool is for",
-  "seo_keywords": ["keyword 1", "keyword 2", "keyword 3"],
-  "pricing_model": "e.g., 'One-time purchase', 'Monthly SaaS', 'Free Open Source'"
+  "technologies": ["Python", "React", "etc"],
+  "status": "published"
 }
 
 The structure, key names, and casing must always remain identical. Do not include markdown formatting (like ```json), just output the raw JSON object.
@@ -38,11 +43,16 @@ Example Input:
 
 Example Output:
 {
-  "title": "Etsy Daily Product Scraper API",
+  "name": "Etsy Daily Product Scraper API",
   "slug": "etsy-daily-product-scraper-api",
-  "tagline": "Automate your competitor research with our reliable Etsy listing extractor.",
-  "features": ["Daily automated scraping", "CSV/JSON Export", "Bypass anti-bot protections"],
-  "target_audience": "Etsy Sellers and E-commerce Researchers",
-  "seo_keywords": ["Etsy scraper", "automate Etsy listings", "Etsy product extractor", "e-commerce scraping tool"],
-  "pricing_model": "Monthly SaaS"
+  "category": "Software",
+  "shortDesc": "Automate your competitor research with our reliable Etsy listing extractor.",
+  "description": "The Etsy Daily Product Scraper API is a comprehensive tool designed to extract fresh product listings, prices, and seller data from Etsy automatically every day.",
+  "problem": "Manually tracking competitor pricing and new product trends on Etsy is time-consuming and prone to human error.",
+  "solution": "An automated API that scrapes Etsy listings daily and delivers structured JSON/CSV data directly to your database.",
+  "valueProp": "Save hundreds of hours in market research and never miss a trending product again.",
+  "targetCustomer": "Etsy Sellers, Market Researchers, and E-commerce Agencies",
+  "features": ["Daily automated scraping", "CSV/JSON Export", "Bypass anti-bot protections", "Competitor tracking"],
+  "technologies": ["Python", "BeautifulSoup", "Puppeteer", "PostgreSQL"],
+  "status": "published"
 }
