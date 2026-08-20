@@ -1195,7 +1195,7 @@ export class UpworkEvaluator {
     const userDataPath = path.join(app.getPath('userData'), 'puppeteer_profile');
 
     this.browser = await puppeteer.launch({
-      headless: false,
+      headless: true,
       executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
       defaultViewport: null,
       args: ['--start-maximized'],
