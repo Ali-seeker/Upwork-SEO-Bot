@@ -16,16 +16,19 @@ export default function Campaigns() {
       loadCampaigns();
     };
 
+    let unsubs = [];
     if (window.api) {
-      // Assuming these event listeners exist in your preload/main
-      window.api.onCampaignStatus?.(handleCampaignUpdate);
-      window.api.onUpworkCampaignStatus?.(handleCampaignUpdate);
-      window.api.onScrapeJobsCampaignStatus?.(handleCampaignUpdate);
-      window.api.onProgress?.(handleCampaignUpdate);
+      if (window.api.onCampaignStatus) unsubs.push(window.api.onCampaignStatus(handleCampaignUpdate));
+      if (window.api.onUpworkCampaignStatus) unsubs.push(window.api.onUpworkCampaignStatus(handleCampaignUpdate));
+      if (window.api.onScrapeJobsCampaignStatus) unsubs.push(window.api.onScrapeJobsCampaignStatus(handleCampaignUpdate));
+      if (window.api.onProgress) unsubs.push(window.api.onProgress(handleCampaignUpdate));
     }
     
     const interval = setInterval(loadCampaigns, 2000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      unsubs.forEach(unsub => unsub && unsub());
+    };
   }, []);
 
   const loadCampaigns = async () => {

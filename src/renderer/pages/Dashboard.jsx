@@ -9,15 +9,23 @@ export default function Dashboard() {
     runningCampaigns: 0,
     completedCampaigns: 0,
     totalRepos: 0,
-    successRate: 0
+    successRate: 0,
+    viableJobs: 0,
+    scannedJobs: 0
   });
 
   const [recentActivity, setRecentActivity] = useState([]);
 
   useEffect(() => {
     const loadStats = async () => {
-      if (window.api && window.api.listCampaigns) {
-        const campaigns = await window.api.listCampaigns();
+      if (window.api) {
+        let campaigns = [];
+        if (window.api.listCampaigns) {
+          campaigns = campaigns.concat(await window.api.listCampaigns());
+        }
+        if (window.api.listUpworkCampaigns) {
+          campaigns = campaigns.concat(await window.api.listUpworkCampaigns());
+        }
         
         const total = campaigns.length;
         const running = campaigns.filter(c => c.status === 'Running').length;
@@ -35,12 +43,23 @@ export default function Dashboard() {
         
         const successRate = totalRepos > 0 ? Math.round((successfulRepos / totalRepos) * 100) : 0;
         
+        let upworkStats = { totalViable: 0, totalProcessed: 0 };
+        if (window.api.getUpworkStats) {
+          try {
+            upworkStats = await window.api.getUpworkStats();
+          } catch (err) {
+            console.error("Failed to fetch upwork stats", err);
+          }
+        }
+
         setStats({
           totalCampaigns: total,
           runningCampaigns: running,
           completedCampaigns: completed,
           totalRepos: successfulRepos,
-          successRate
+          successRate,
+          viableJobs: upworkStats.totalViable || 0,
+          scannedJobs: upworkStats.totalProcessed || 0
         });
 
         // Get recent activity (last 5 campaigns)
@@ -73,16 +92,16 @@ export default function Dashboard() {
       animate: stats.runningCampaigns > 0
     },
     {
-      title: 'Repositories Created',
-      value: stats.totalRepos,
-      icon: GitBranch,
+      title: 'Viable Jobs Found',
+      value: stats.viableJobs,
+      icon: Star,
       color: 'green',
       gradient: 'from-green-500 to-emerald-500'
     },
     {
-      title: 'Success Rate',
-      value: `${stats.successRate}%`,
-      icon: TrendingUp,
+      title: 'Total Jobs Scanned',
+      value: stats.scannedJobs,
+      icon: Activity,
       color: 'yellow',
       gradient: 'from-yellow-500 to-orange-500'
     }

@@ -11,8 +11,8 @@ SEO Optimization
 The content must target long-tail keywords based on the problem or tools mentioned so it ranks on Google.
 
 STRICT RULES (Top Priority)
-STRICT RULE 1 — STRICT LENGTH LIMIT
-The database has storage constraints. Keep the blog very short. The introduction must be 1-2 sentences. The main content should just be 2-3 short bullet points. The conclusion must be 1 sentence. Do NOT write a lengthy essay.
+STRICT RULE 1 — COMPREHENSIVE AND IN-DEPTH
+Write a detailed, comprehensive, and highly SEO-optimized blog post of at least 800 - 1200 words. Include an engaging introduction, multiple detailed headings (H2, H3), technical explanations (how it works, challenges, use cases, API examples if relevant), and a strong conclusion. Provide value and depth to the reader. Do NOT just write a few short bullet points.
 STRICT RULE 2 — ALWAYS BASE IT ON THE JOB
 Extract the exact tools, platforms, or problems mentioned in the job description to make the blog highly relevant.
 STRICT RULE 3 — DO NOT PITCH A PRODUCT DIRECTLY IN THE BLOG
@@ -42,7 +42,7 @@ Example Output:
   "slug": "how-to-automate-reddit-engagement-safely-using-selenium",
   "category": "News",
   "excerpt": "Automating community engagement on Reddit can save hours of manual work, but doing it safely requires the right tools like Selenium.",
-  "content": "<h2>Why Automate Reddit?</h2><p>Reddit is a powerful platform but manual engagement takes too much time.</p><h2>Best Practices</h2><ul><li>Use proxies to avoid rate limits.</li><li>Implement randomized delays to mimic human behavior.</li><li>Keep comments highly relevant to the subreddit rules.</li></ul><p>If you need a reliable Reddit bot, always work with experts who understand stealth automation.</p>",
+  "content": "<h2>Introduction to Reddit Automation</h2><p>Reddit is a powerful platform for community engagement...</p><h2>Why Automate Reddit?</h2><p>Manual engagement takes too much time...</p><h3>Understanding Rate Limits</h3><p>Reddit's API and anti-bot systems...</p><h2>Best Practices for Selenium on Reddit</h2><ul><li>Use proxies to avoid rate limits.</li><li>Implement randomized delays to mimic human behavior.</li><li>Keep comments highly relevant to the subreddit rules.</li></ul><h2>Conclusion</h2><p>If you need a reliable Reddit bot, always work with experts who understand stealth automation...</p>",
   "author": "Admin",
   "status": "published"
 }

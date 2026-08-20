@@ -768,11 +768,13 @@ export default function CreateCampaignModal({ open, onClose, onCreate }) {
           )}
 
           {/* Time Coefficient Selection */}
-          <div>
-            <label className="block text-sm font-medium text-neutral-300 mb-3">
-              Execution Speed <span className="text-red-400">*</span>
-            </label>
-            <div className="grid grid-cols-2 gap-3">
+          {formData.category !== 'upwork' && (
+            <>
+              <div>
+                <label className="block text-sm font-medium text-neutral-300 mb-3">
+                  Execution Speed <span className="text-red-400">*</span>
+                </label>
+                <div className="grid grid-cols-2 gap-3">
               {Object.entries(timeCoefficients).map(([key, coeff]) => (
                 <button
                   key={key}
@@ -841,14 +843,7 @@ export default function CreateCampaignModal({ open, onClose, onCreate }) {
               </p>
             </div>
           )}
-
-          {/* Estimated Time */}
-          {estimatedTime && (
-            <div className="p-4 bg-cyan-500/10 border border-cyan-500/50 rounded-xl">
-              <p className="text-sm text-cyan-400">
-                ⏱Estimated completion time: <strong>{estimatedTime}</strong>
-              </p>
-            </div>
+            </>
           )}
 
           {/* Account Group Selection (Hidden - GitHub features removed) */}

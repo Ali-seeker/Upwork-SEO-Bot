@@ -2,6 +2,8 @@ import pg from 'pg';
 import { v4 as uuidv4 } from 'uuid';
 import { nanoid } from 'nanoid';
 import dotenv from 'dotenv';
+import { execFile } from 'child_process';
+import path from 'path';
 dotenv.config();
 
 const { Pool } = pg;
@@ -467,10 +469,35 @@ class Storage {
 
   async getProcessedJobsStats() {
     await this.ensureConnected();
-    const res = await this.pool.query('SELECT COUNT(*) as total FROM processed_jobs');
     const viable = await this.pool.query("SELECT COUNT(*) as v FROM processed_jobs WHERE decision = 'Yes'");
+    
+    // Fetch total scanned from Python SQLite DB
+    let totalProcessed = parseInt(viable.rows[0].v) || 0;
+    try {
+      const scriptPath = path.join(process.cwd(), 'upwork-discord-bot', 'get_total_jobs.py');
+      
+      const total = await new Promise((resolve) => {
+        execFile('python', [scriptPath], (error, stdout, stderr) => {
+          if (error) {
+            console.error('Python script error:', error, 'stderr:', stderr);
+            return resolve(0);
+          }
+          try {
+            const data = JSON.parse(stdout);
+            resolve(data.total || 0);
+          } catch (e) {
+            console.error('Python stdout parse error:', e, 'stdout:', stdout);
+            resolve(0);
+          }
+        });
+      });
+      if (total > 0) totalProcessed = total;
+    } catch (e) {
+      console.error('Error fetching total jobs from sqlite:', e);
+    }
+    
     return {
-      totalProcessed: parseInt(res.rows[0].total) || 0,
+      totalProcessed: totalProcessed,
       totalViable: parseInt(viable.rows[0].v) || 0
     };
   }

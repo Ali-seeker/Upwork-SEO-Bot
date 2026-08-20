@@ -20,6 +20,7 @@ contextBridge.exposeInMainWorld('api', {
   startUpworkCampaign: (id) => ipcRenderer.invoke('upworkCampaigns:start', { id }),
   stopUpworkCampaign: (id) => ipcRenderer.invoke('upworkCampaigns:stop', { id }),
   deleteUpworkCampaign: (id) => ipcRenderer.invoke('upworkCampaigns:delete', id),
+  getUpworkStats: () => ipcRenderer.invoke('upworkCampaigns:stats'),
 
 
   // GoLogin operations

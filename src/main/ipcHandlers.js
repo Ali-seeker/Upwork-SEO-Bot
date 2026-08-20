@@ -593,6 +593,15 @@ ipcMain.handle('upworkCampaigns:delete', async (_event, id) => {
   }
 });
 
+ipcMain.handle('upworkCampaigns:stats', async () => {
+  try {
+    return await storage.getProcessedJobsStats();
+  } catch (error) {
+    console.error('❌ Error getting upwork stats:', error);
+    throw error;
+  }
+});
+
 ipcMain.handle('scrapeJobsCampaigns:list', async () => {
   try {
     //console.log('📋 Listing scrape-jobs campaigns');
